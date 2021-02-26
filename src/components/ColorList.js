@@ -1,10 +1,14 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { useHistory } from 'react-router-dom';
+import { axiosWithAuth } from '../helpers/axiosWithAuth';
+import EditMenu from './EditMenu';
 
 const initialColor = {
   color: "",
   code: { hex: "" }
 };
+
+
 
 const ColorList = ({ colors, updateColors }) => {
   const [editing, setEditing] = useState(false);
@@ -17,10 +21,22 @@ const ColorList = ({ colors, updateColors }) => {
 
   const saveEdit = e => {
     e.preventDefault();
-
+    axiosWithAuth()
+      .put(`/api/colors/${colorToEdit.id}`, colorToEdit)
+      .then((res) => {
+        useHistory.push('/bubbles/reload')
+      })
   };
 
   const deleteColor = color => {
+    axiosWithAuth()
+      .delete(`/api/colors/${color.id}`)
+      .then((res) => {
+        useHistory.push('/bubbles/reload')
+      })
+      .catch((err) => {
+        alert(err)
+      })
   };
 
   return (
