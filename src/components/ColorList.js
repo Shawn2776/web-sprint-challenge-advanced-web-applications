@@ -24,18 +24,23 @@ const ColorList = ({ colors, updateColors }) => {
     axiosWithAuth()
       .put(`/api/colors/${colorToEdit.id}`, colorToEdit)
       .then((res) => {
-        useHistory.push('/bubbles/reload')
+        const newColors = colors.filter((item) => item.id !== res.data.id);
+        updateColors([...newColors, res.data])
+        setEditing(false)
+      })
+      .catch((err) => {
+        alert(`SaveEdit Error: ${err}`)
       })
   };
 
   const deleteColor = color => {
+    const id = color.id
+
     axiosWithAuth()
       .delete(`/api/colors/${color.id}`)
       .then((res) => {
-        useHistory.push('/bubbles/reload')
-      })
-      .catch((err) => {
-        alert(err)
+        const newColors = colors.filter((color) => color.id !== id);
+        updateColors(newColors)
       })
   };
 
